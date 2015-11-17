@@ -1,0 +1,45 @@
+Elm.StudentDirectory = Elm.StudentDirectory || {};
+Elm.StudentDirectory.make = function (_elm) {
+   "use strict";
+   _elm.StudentDirectory = _elm.StudentDirectory || {};
+   if (_elm.StudentDirectory.values)
+   return _elm.StudentDirectory.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "StudentDirectory",
+   $Basics = Elm.Basics.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $Html$Attributes = Elm.Html.Attributes.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $StudentView = Elm.StudentView.make(_elm);
+   var view = function (student_directory) {
+      return A2($Html.ul,
+      _L.fromArray([$Html$Attributes.$class("students")]),
+      A2($List.map,
+      $StudentView.student_view,
+      student_directory.students));
+   };
+   var student_directory = {_: {}
+                           ,students: _L.fromArray([{_: {}
+                                                    ,name: "Huey Duck"}
+                                                   ,{_: {},name: "Dewey Duck"}
+                                                   ,{_: {}
+                                                    ,name: "Louie Duck"}])};
+   var main = view(student_directory);
+   var StudentDirectory = function (a) {
+      return {_: {},students: a};
+   };
+   var None = {ctor: "None"};
+   _elm.StudentDirectory.values = {_op: _op
+                                  ,None: None
+                                  ,StudentDirectory: StudentDirectory
+                                  ,student_directory: student_directory
+                                  ,view: view
+                                  ,main: main};
+   return _elm.StudentDirectory.values;
+};
