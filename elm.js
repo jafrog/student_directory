@@ -13305,6 +13305,36 @@ Elm.String.make = function (_elm) {
                         ,all: all};
    return _elm.String.values;
 };
+Elm.Student = Elm.Student || {};
+Elm.Student.make = function (_elm) {
+   "use strict";
+   _elm.Student = _elm.Student || {};
+   if (_elm.Student.values)
+   return _elm.Student.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Student",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var Student = F4(function (a,
+   b,
+   c,
+   d) {
+      return {_: {}
+             ,email: b
+             ,github_username: c
+             ,name: a
+             ,photo_url: d};
+   });
+   _elm.Student.values = {_op: _op
+                         ,Student: Student};
+   return _elm.Student.values;
+};
 Elm.StudentDirectory = Elm.StudentDirectory || {};
 Elm.StudentDirectory.make = function (_elm) {
    "use strict";
@@ -13320,13 +13350,13 @@ Elm.StudentDirectory.make = function (_elm) {
    $Effects = Elm.Effects.make(_elm),
    $Html = Elm.Html.make(_elm),
    $Html$Attributes = Elm.Html.Attributes.make(_elm),
-   $Http = Elm.Http.make(_elm),
-   $Json$Decode = Elm.Json.Decode.make(_elm),
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
+   $Student = Elm.Student.make(_elm),
    $StudentView = Elm.StudentView.make(_elm),
+   $StudentsFetcher = Elm.StudentsFetcher.make(_elm),
    $Task = Elm.Task.make(_elm);
    var view = F2(function (address,
    student_directory) {
@@ -13336,16 +13366,6 @@ Elm.StudentDirectory.make = function (_elm) {
       $StudentView.student_view,
       student_directory.students));
    });
-   var studentsDirectoryDecoder = $Json$Decode.list(A2($Json$Decode.object1,
-   $StudentView.Student,
-   A2($Json$Decode._op[":="],
-   "name",
-   $Json$Decode.string)));
-   var studentsUrl = "http://makers-directory.herokuapp.com/v1/students.json";
-   var dummy_student_list = _L.fromArray([{_: {}
-                                          ,name: "Huey Duck"}
-                                         ,{_: {},name: "Dewey Duck"}
-                                         ,{_: {},name: "Louie Duck"}]);
    var StudentDirectory = function (a) {
       return {_: {},students: a};
    };
@@ -13364,29 +13384,18 @@ Elm.StudentDirectory.make = function (_elm) {
                    ,_0: student_directory
                    ,_1: $Effects.none};}
          _U.badCase($moduleName,
-         "between lines 52 and 57");
+         "between lines 34 and 39");
       }();
    });
    var GotStudents = function (a) {
       return {ctor: "GotStudents"
              ,_0: a};
    };
-   var getStudents = $Effects.task($Task.map(GotStudents)($Task.toMaybe($Http.fromJson(studentsDirectoryDecoder)(A2($Http.send,
-   $Http.defaultSettings,
-   {_: {}
-   ,body: $Http.empty
-   ,headers: _L.fromArray([{ctor: "_Tuple2"
-                           ,_0: "Access-Token"
-                           ,_1: "s9ufge9s8ryh34ijkrklefjsl"}
-                          ,{ctor: "_Tuple2"
-                           ,_0: "Donkey"
-                           ,_1: "niihaa"}])
-   ,url: studentsUrl
-   ,verb: "GET"})))));
+   var callStudentsFetcher = $Effects.task($Task.map(GotStudents)($StudentsFetcher.getStudents));
    var init = {ctor: "_Tuple2"
               ,_0: {_: {}
                    ,students: _L.fromArray([])}
-              ,_1: getStudents};
+              ,_1: callStudentsFetcher};
    var None = {ctor: "None"};
    _elm.StudentDirectory.values = {_op: _op
                                   ,view: view
@@ -13411,19 +13420,76 @@ Elm.StudentView.make = function (_elm) {
    $List = Elm.List.make(_elm),
    $Maybe = Elm.Maybe.make(_elm),
    $Result = Elm.Result.make(_elm),
-   $Signal = Elm.Signal.make(_elm);
+   $Signal = Elm.Signal.make(_elm),
+   $Student = Elm.Student.make(_elm);
    var student_view = function (student) {
       return A2($Html.li,
       _L.fromArray([$Html$Attributes.$class("student")]),
-      _L.fromArray([$Html.text(student.name)]));
-   };
-   var Student = function (a) {
-      return {_: {},name: a};
+      _L.fromArray([A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("name")]),
+                   _L.fromArray([$Html.text(student.name)]))
+                   ,A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("email")]),
+                   _L.fromArray([$Html.text(student.email)]))
+                   ,A2($Html.span,
+                   _L.fromArray([$Html$Attributes.$class("github_username")]),
+                   _L.fromArray([$Html.text(student.github_username)]))
+                   ,A2($Html.img,
+                   _L.fromArray([$Html$Attributes.src(student.photo_url)
+                                ,$Html$Attributes.$class("photo")]),
+                   _L.fromArray([]))]));
    };
    _elm.StudentView.values = {_op: _op
-                             ,student_view: student_view
-                             ,Student: Student};
+                             ,student_view: student_view};
    return _elm.StudentView.values;
+};
+Elm.StudentsFetcher = Elm.StudentsFetcher || {};
+Elm.StudentsFetcher.make = function (_elm) {
+   "use strict";
+   _elm.StudentsFetcher = _elm.StudentsFetcher || {};
+   if (_elm.StudentsFetcher.values)
+   return _elm.StudentsFetcher.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "StudentsFetcher",
+   $Basics = Elm.Basics.make(_elm),
+   $Http = Elm.Http.make(_elm),
+   $Json$Decode = Elm.Json.Decode.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $Student = Elm.Student.make(_elm),
+   $Task = Elm.Task.make(_elm);
+   var studentsDirectoryDecoder = $Json$Decode.list(A5($Json$Decode.object4,
+   $Student.Student,
+   A2($Json$Decode._op[":="],
+   "name",
+   $Json$Decode.string),
+   A2($Json$Decode._op[":="],
+   "email",
+   $Json$Decode.string),
+   A2($Json$Decode._op[":="],
+   "github_username",
+   $Json$Decode.string),
+   A2($Json$Decode._op[":="],
+   "photo_url",
+   $Json$Decode.string)));
+   var studentsUrl = "http://makers-directory.herokuapp.com/v1/students.json";
+   var getStudents = $Task.toMaybe($Http.fromJson(studentsDirectoryDecoder)(A2($Http.send,
+   $Http.defaultSettings,
+   {_: {}
+   ,body: $Http.empty
+   ,headers: _L.fromArray([{ctor: "_Tuple2"
+                           ,_0: "Access-Token"
+                           ,_1: "s9ufge9s8ryh34ijkrklefjsl"}])
+   ,url: studentsUrl
+   ,verb: "GET"})));
+   _elm.StudentsFetcher.values = {_op: _op
+                                 ,getStudents: getStudents};
+   return _elm.StudentsFetcher.values;
 };
 Elm.Task = Elm.Task || {};
 Elm.Task.make = function (_elm) {

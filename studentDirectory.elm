@@ -6,42 +6,25 @@ module StudentDirectory (view, update, init) where
 import Html exposing (Html, div, button, text, span, ul)
 import Html.Attributes exposing (class)
 import Effects exposing (Effects)
-import Http
 import Task
-import Json.Decode as Json exposing ((:=), andThen)
 
-import StudentView exposing (student_view, Student)
+import Student exposing (Student)
+import StudentView exposing (student_view)
+import StudentsFetcher
 
 type Action = None | GotStudents (Maybe (List Student))
 type alias StudentDirectory = {students: List Student}
-
-dummy_student_list = [{name = "Huey Duck"}, {name = "Dewey Duck"}, {name = "Louie Duck"}]
 
 {-|
 Initial pair of Student Directory model and request for students
 -}
 init : (StudentDirectory, Effects Action)
-init = ({students = []}, getStudents)
+init = ({students = []}, callStudentsFetcher)
 
-studentsUrl : String
-studentsUrl = "http://makers-directory.herokuapp.com/v1/students.json"
-
-getStudents : Effects Action
-getStudents =
-  Http.send Http.defaultSettings
-      {
-        url = studentsUrl,
-        verb = "GET",
-        body = Http.empty,
-        headers = [("Access-Token", "s9ufge9s8ryh34ijkrklefjsl")]
-      }
-    |> Http.fromJson studentsDirectoryDecoder
-    |> Task.toMaybe
-    |> Task.map GotStudents
-    |> Effects.task
-
-studentsDirectoryDecoder : Json.Decoder (List Student)
-studentsDirectoryDecoder = Json.list (Json.object1 Student ("name" := Json.string))
+callStudentsFetcher : Effects Action
+callStudentsFetcher =
+  StudentsFetcher.getStudents |> Task.map GotStudents
+                              |> Effects.task
 
 {-|
 Student Directory updates
