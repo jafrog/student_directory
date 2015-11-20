@@ -17,29 +17,37 @@ Elm.StudentDirectory.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $StudentView = Elm.StudentView.make(_elm);
-   var view = function (student_directory) {
+   var view = F2(function (address,
+   student_directory) {
       return A2($Html.ul,
       _L.fromArray([$Html$Attributes.$class("students")]),
       A2($List.map,
       $StudentView.student_view,
       student_directory.students));
-   };
+   });
+   var update = F2(function (action,
+   student_directory) {
+      return function () {
+         switch (action.ctor)
+         {case "None":
+            return student_directory;}
+         _U.badCase($moduleName,
+         "between lines 26 and 27");
+      }();
+   });
    var student_directory = {_: {}
                            ,students: _L.fromArray([{_: {}
                                                     ,name: "Huey Duck"}
                                                    ,{_: {},name: "Dewey Duck"}
                                                    ,{_: {}
                                                     ,name: "Louie Duck"}])};
-   var main = view(student_directory);
    var StudentDirectory = function (a) {
       return {_: {},students: a};
    };
    var None = {ctor: "None"};
    _elm.StudentDirectory.values = {_op: _op
-                                  ,None: None
-                                  ,StudentDirectory: StudentDirectory
-                                  ,student_directory: student_directory
                                   ,view: view
-                                  ,main: main};
+                                  ,update: update
+                                  ,student_directory: student_directory};
    return _elm.StudentDirectory.values;
 };

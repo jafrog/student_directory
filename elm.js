@@ -2938,6 +2938,11 @@ Elm.Html.Attributes.make = function (_elm) {
    $String = Elm.String.make(_elm),
    $VirtualDom = Elm.VirtualDom.make(_elm);
    var attribute = $VirtualDom.attribute;
+   var contextmenu = function (value) {
+      return A2(attribute,
+      "contextmenu",
+      value);
+   };
    var property = $VirtualDom.property;
    var stringProperty = F2(function (name,
    string) {
@@ -2962,13 +2967,8 @@ Elm.Html.Attributes.make = function (_elm) {
    };
    var accesskey = function ($char) {
       return A2(stringProperty,
-      "accesskey",
-      $String.fromList(_L.fromArray([$char])));
-   };
-   var contextmenu = function (value) {
-      return A2(stringProperty,
-      "contextmenu",
-      value);
+      "accessKey",
+      $String.fromChar($char));
    };
    var dir = function (value) {
       return A2(stringProperty,
@@ -3117,7 +3117,7 @@ Elm.Html.Attributes.make = function (_elm) {
    };
    var formaction = function (value) {
       return A2(stringProperty,
-      "formaction",
+      "formAction",
       value);
    };
    var list = function (value) {
@@ -4046,6 +4046,32 @@ Elm.List.make = function (_elm) {
                       ,sortBy: sortBy
                       ,sortWith: sortWith};
    return _elm.List.values;
+};
+Elm.Main = Elm.Main || {};
+Elm.Main.make = function (_elm) {
+   "use strict";
+   _elm.Main = _elm.Main || {};
+   if (_elm.Main.values)
+   return _elm.Main.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "Main",
+   $Basics = Elm.Basics.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm),
+   $StartApp$Simple = Elm.StartApp.Simple.make(_elm),
+   $StudentDirectory = Elm.StudentDirectory.make(_elm);
+   var main = $StartApp$Simple.start({_: {}
+                                     ,model: $StudentDirectory.student_directory
+                                     ,update: $StudentDirectory.update
+                                     ,view: $StudentDirectory.view});
+   _elm.Main.values = {_op: _op
+                      ,main: main};
+   return _elm.Main.values;
 };
 Elm.Maybe = Elm.Maybe || {};
 Elm.Maybe.make = function (_elm) {
@@ -12211,6 +12237,68 @@ Elm.Signal.make = function (_elm) {
                         ,Mailbox: Mailbox};
    return _elm.Signal.values;
 };
+Elm.StartApp = Elm.StartApp || {};
+Elm.StartApp.Simple = Elm.StartApp.Simple || {};
+Elm.StartApp.Simple.make = function (_elm) {
+   "use strict";
+   _elm.StartApp = _elm.StartApp || {};
+   _elm.StartApp.Simple = _elm.StartApp.Simple || {};
+   if (_elm.StartApp.Simple.values)
+   return _elm.StartApp.Simple.values;
+   var _op = {},
+   _N = Elm.Native,
+   _U = _N.Utils.make(_elm),
+   _L = _N.List.make(_elm),
+   $moduleName = "StartApp.Simple",
+   $Basics = Elm.Basics.make(_elm),
+   $Debug = Elm.Debug.make(_elm),
+   $Html = Elm.Html.make(_elm),
+   $List = Elm.List.make(_elm),
+   $Maybe = Elm.Maybe.make(_elm),
+   $Result = Elm.Result.make(_elm),
+   $Signal = Elm.Signal.make(_elm);
+   var start = function (config) {
+      return function () {
+         var update = F2(function (maybeAction,
+         model) {
+            return function () {
+               switch (maybeAction.ctor)
+               {case "Just":
+                  return A2(config.update,
+                    maybeAction._0,
+                    model);
+                  case "Nothing":
+                  return $Debug.crash("This should never happen.");}
+               _U.badCase($moduleName,
+               "between lines 91 and 98");
+            }();
+         });
+         var actions = $Signal.mailbox($Maybe.Nothing);
+         var address = A2($Signal.forwardTo,
+         actions.address,
+         $Maybe.Just);
+         var model = A3($Signal.foldp,
+         update,
+         config.model,
+         actions.signal);
+         return A2($Signal.map,
+         config.view(address),
+         model);
+      }();
+   };
+   var Config = F3(function (a,
+   b,
+   c) {
+      return {_: {}
+             ,model: a
+             ,update: c
+             ,view: b};
+   });
+   _elm.StartApp.Simple.values = {_op: _op
+                                 ,Config: Config
+                                 ,start: start};
+   return _elm.StartApp.Simple.values;
+};
 Elm.String = Elm.String || {};
 Elm.String.make = function (_elm) {
    "use strict";
@@ -12331,30 +12419,38 @@ Elm.StudentDirectory.make = function (_elm) {
    $Result = Elm.Result.make(_elm),
    $Signal = Elm.Signal.make(_elm),
    $StudentView = Elm.StudentView.make(_elm);
-   var view = function (student_directory) {
+   var view = F2(function (address,
+   student_directory) {
       return A2($Html.ul,
       _L.fromArray([$Html$Attributes.$class("students")]),
       A2($List.map,
       $StudentView.student_view,
       student_directory.students));
-   };
+   });
+   var update = F2(function (action,
+   student_directory) {
+      return function () {
+         switch (action.ctor)
+         {case "None":
+            return student_directory;}
+         _U.badCase($moduleName,
+         "between lines 26 and 27");
+      }();
+   });
    var student_directory = {_: {}
                            ,students: _L.fromArray([{_: {}
                                                     ,name: "Huey Duck"}
                                                    ,{_: {},name: "Dewey Duck"}
                                                    ,{_: {}
                                                     ,name: "Louie Duck"}])};
-   var main = view(student_directory);
    var StudentDirectory = function (a) {
       return {_: {},students: a};
    };
    var None = {ctor: "None"};
    _elm.StudentDirectory.values = {_op: _op
-                                  ,None: None
-                                  ,StudentDirectory: StudentDirectory
-                                  ,student_directory: student_directory
                                   ,view: view
-                                  ,main: main};
+                                  ,update: update
+                                  ,student_directory: student_directory};
    return _elm.StudentDirectory.values;
 };
 Elm.StudentView = Elm.StudentView || {};
