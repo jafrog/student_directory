@@ -1,5 +1,13 @@
-import StartApp.Simple exposing (start)
-import StudentDirectory exposing (view, update, student_directory)
+import StartApp exposing (start)
+import Task
+import Effects exposing (Never)
+import StudentDirectory exposing (view, update, init)
 
-main =
-  start { model = student_directory, update = update, view = view }
+app =
+  start { init = init, update = update, view = view, inputs = [] }
+
+main = app.html
+
+port tasks : Signal (Task.Task Never ())
+port tasks =
+    app.tasks
